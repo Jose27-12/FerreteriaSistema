@@ -1,0 +1,71 @@
+.add-product-container {
+  margin-left: 260px;
+    width: 600px; /* ajusta según ancho de tu sidebar */
+    padding: 40px;
+    display: grid;
+    place-items: center;
+    background-color: #f4f6f8;
+    border-radius: 12px;
+  }
+  
+  .add-product-form {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .add-product-form h2 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .add-product-form input,
+  .add-product-form select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .add-product-form button {
+    padding: 12px;
+    background-color: #1bc700;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .add-product-form button:hover {
+    background-color: #17a900;
+  }
+  
+
+  .mensaje-feedback {
+    padding: 10px 16px;
+    margin-bottom: 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .mensaje-feedback.exito {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+  
+  .mensaje-feedback.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+  
