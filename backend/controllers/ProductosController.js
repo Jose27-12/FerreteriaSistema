@@ -43,9 +43,27 @@ const buscarProductoPorNombre = (req, res) => {
     });
   };
 
+  const eliminarProducto = (req, res) => {
+    const { id } = req.params;
+    connection.query('DELETE FROM producto WHERE id_Producto = ?', [id], (err, result) => {
+      if (err) {
+        console.error('Error al eliminar producto:', err);
+        return res.status(500).json({ success: false, message: 'Error al eliminar producto' });
+      }
+  
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ success: false, message: 'Producto no encontrado' });
+      }
+  
+      res.status(200).json({ message: 'Producto eliminado correctamente' });
+    });
+    
+  }
+
   
 module.exports = {
   getProductos,
   buscarProductoPorNombre,
   agregarProducto,
+  eliminarProducto,
 };
