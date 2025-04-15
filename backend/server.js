@@ -10,10 +10,12 @@ app.use(express.json());
 // Importar Rutas
 const productosRoutes = require('./routes/Productos');
 const authRoutes = require('./routes/Auth');
+const clientesRoutes = require('./routes/Clientes');
 
 // Usar Rutas
 app.use('/api/productos', productosRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/clientes', clientesRoutes);
 
 
 

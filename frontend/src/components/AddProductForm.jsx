@@ -14,8 +14,12 @@ function AddProductForm() {
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [tipoMensaje, setTipoMensaje] = useState(''); // 'exito' o 'error'
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  }
+  
   useEffect(() => {
     if (cargo !== 'Admin') {
       setSedeSeleccionada(sede);
@@ -70,11 +74,11 @@ function AddProductForm() {
     }
   };
     
-
+  
   return (
     <div className="main-layout">
-      <Sidebar />
-      <div className="add-product-container">
+      <Sidebar cargo={cargo} isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <div className={`add-product-container ${sidebarOpen ? 'shifted' : ''}`}>
         {mensaje && (
       <div className={`mensaje-feedback ${tipoMensaje}`}>
         {mensaje}

@@ -60,10 +60,35 @@ const buscarProductoPorNombre = (req, res) => {
     
   }
 
+  const editarProducto = (req, res) => {
+    const { id } = req.params;
+    const { nombre, precio, stock } = req.body;
+  
+    if (!nombre || !precio || !stock) {
+      console.error('Faltan campos obligatorios');
+      return res.status(400).json({ success: false, message: 'Faltan campos obligatorios' });
+    }
+  
+    const query = 'UPDATE producto SET Nombre = ?, Precio = ?, Stock = ? WHERE id_Producto = ?';
+    connection.query(query, [nombre, precio, stock, id], (err, result) => {
+      if (err) {
+        console.error('Error al editar producto:', err);
+        return res.status(500).json({ success: false, message: 'Error al editar producto' });
+      }
+  
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ success: false, message: 'Producto no encontrado' });
+      }
+  
+      res.status(200).json({ success: true, message: 'Producto editado correctamente' });
+    });
+  }
+
   
 module.exports = {
   getProductos,
   buscarProductoPorNombre,
   agregarProducto,
   eliminarProducto,
+  editarProducto,
 };
