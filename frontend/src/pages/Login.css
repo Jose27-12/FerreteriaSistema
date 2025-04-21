@@ -72,6 +72,18 @@ body {
     transition: background-color 0.3s ease;
 }
 
+.btn-login{
+    background-color: #004d40;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    padding: 10px;
+}
+
 .login-form button:hover {
     background-color: #00695c;
 }

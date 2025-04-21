@@ -3,7 +3,17 @@ const connection = require('../config/connection');
 
 // Obtener todos los productos
 const getProductos = (req, res) => {
-  connection.query('SELECT id_Producto, id_Sede, Nombre, Precio, Stock FROM producto', (err, results) => {
+  const { sede } = req.query;
+
+  let query = 'SELECT id_Producto, id_Sede, Nombre, Precio, Stock FROM producto';
+  let params = [];
+
+  if (sede) {
+    query += ' WHERE id_Sede = ?';
+    params.push(sede);
+  }
+
+  connection.query(query, params, (err, results) => {
     if (err) {
       console.error('Error al obtener productos:', err);
       return res.status(500).json({ error: 'Error al obtener productos' });
@@ -11,6 +21,7 @@ const getProductos = (req, res) => {
     res.json(results);
   });
 };
+
 
 const buscarProductoPorNombre = (req, res) => {
     const { nombre } = req.params;
@@ -84,6 +95,61 @@ const buscarProductoPorNombre = (req, res) => {
     });
   }
 
+  // Actualizar el stock de un producto
+  const actualizarStock = (req, res) => {
+    const { id_Producto } = req.params;
+    const { cantidad } = req.body; 
+    if (!cantidad || cantidad <= 0) {
+      return res.status(400).json({ success: false, message: 'Cantidad inválida' });
+    }
+  
+    // Primero obtenemos el stock actual
+    connection.query('SELECT Stock, Nombre FROM producto WHERE id_Producto = ?', [id_Producto], (err, results) => {
+      if (err || results.length === 0) {
+        return res.status(500).json({ success: false, message: 'Error al consultar stock actual' });
+      }
+      const stockActual = Number(results[0].Stock);
+      const nombreProducto = results[0].Nombre;
+      const cantidadVendida = Number(producto.cantidad);
+      const nuevoStock = stockActual - cantidadVendida;
+  
+      if (isNaN(nuevoStock < 0)) {
+        return res.status(400).json({ success: false, message: 'Stock insuficiente' });
+      }
+  
+      // Actualizamos el nuevo stock
+     connection.query('UPDATE producto SET Stock = ? WHERE id_Producto = ?', [nuevoStock, id_Producto], (err, result) => {
+        if (err) {
+          return res.status(500).json({ success: false, message: 'Error al actualizar stock' });
+        }
+  
+        notificarStockBajo(nombreProducto, nuevoStock);
+  
+        res.status(200).json({ success: true, message: 'Stock actualizado correctamente', stock: nuevoStock });
+      });
+    });
+  };
+  
+
+
+// Obtener productos con stock bajo (<=10)
+const getProductosBajoStock = (req, res) => {
+  const query = 'SELECT * FROM producto WHERE Stock <= 10';
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error('Error al obtener productos con stock bajo:', err);
+      return res.status(500).json({ error: 'Error al obtener productos con stock bajo' });
+    }
+    res.json(results);
+  });
+};
+
+function notificarStockBajo(nombreProducto, stock) {
+  if (stock <= 10) {
+    console.log(`⚠️  Alerta: El producto "${nombreProducto}" tiene solo ${stock} unidades en stock.`);
+  }
+}
+
   
 module.exports = {
   getProductos,
@@ -91,4 +157,6 @@ module.exports = {
   agregarProducto,
   eliminarProducto,
   editarProducto,
+  actualizarStock,
+  getProductosBajoStock,
 };

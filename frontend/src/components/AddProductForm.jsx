@@ -4,7 +4,7 @@ import Sidebar from './Sidebar'; // Asegúrate de que la ruta sea correcta
 import './AddProductForm.css'; // Asegúrate de tener un archivo CSS para estilos
 
 function AddProductForm() {
-  const cargo = localStorage.getItem('cargo');
+  
   const sede = localStorage.getItem('sede');
 
   const [nombre, setNombre] = useState('');

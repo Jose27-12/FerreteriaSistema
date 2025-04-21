@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-// 1. AÑADE 'busqueda' A LAS PROPS RECIBIDAS
-const Productos = ({ busqueda, cargo, idSede }) => {
+const Productos = ({ busqueda, cargo, idSede, carrito, setCarrito }) => {
   const [productos, setProductos] = useState([]);
   const [productoAEliminar, setProductoAEliminar] = useState(null);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
@@ -15,32 +14,46 @@ const Productos = ({ busqueda, cargo, idSede }) => {
     stock: "",
   });
 
+  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
+  const [cantidad, setCantidad] = useState(1);
+  const [mostrarModalCarrito, setMostrarModalCarrito] = useState(false);
+
   useEffect(() => {
-    obtenerProductos();
-    // Si necesitas que se actualice si cambia idSede, añádelo al array de dependencias:
-  }, [idSede]); // <-- Añadido idSede si la carga depende de ello
+    if (idSede || cargo === "Admin") {
+      obtenerProductos(); // Cargar productos al iniciar el componente
+    }
+    if (cargo === "Admin") {
+      setCarrito([]); // Reiniciar carrito si es vendedor
+    }
+  }, [idSede, cargo]); // Dependiendo tanto de idSede como de cargo
 
   const obtenerProductos = async () => {
     try {
-      // Asegúrate que la URL es correcta, si depende de idSede, inclúyelo
-      const response = await axios.get("http://localhost:3000/api/productos");
+      let params = {}; // Parámetros por defecto (vacío)
+
+      if (cargo !== "Admin") {
+        // Si no es Admin, filtrar por sede
+        params = { sede: idSede };
+      }
+
+      const response = await axios.get("http://localhost:3000/api/productos", {
+        params, // Enviar parámetros condicionalmente
+      });
       setProductos(response.data);
     } catch (error) {
       console.error("Error al obtener productos:", error);
     }
   };
 
-  // Función para formatear el precio como pesos colombianos
   const formatearPrecio = (precio) => {
-    // Asegúrate que el precio sea un número antes de formatear
     const numPrecio = Number(precio);
     if (isNaN(numPrecio)) {
-      return "Precio inválido"; // O maneja el error como prefieras
+      return "Precio inválido";
     }
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
       currency: 'COP',
-      minimumFractionDigits: 0, // Puedes poner 0 si no manejas centavos
+      minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(numPrecio);
   };
@@ -55,7 +68,7 @@ const Productos = ({ busqueda, cargo, idSede }) => {
       await axios.delete(`http://localhost:3000/api/productos/eliminar/${productoAEliminar.id}`);
       setMostrarConfirmacion(false);
       setMensajeExito(true);
-      obtenerProductos(); // Recarga la lista
+      obtenerProductos();
 
       setTimeout(() => {
         setMensajeExito(false);
@@ -78,6 +91,50 @@ const Productos = ({ busqueda, cargo, idSede }) => {
     setEditandoId(null);
   };
 
+  const manejarAgregarCarrito = (producto) => {
+    setProductoSeleccionado(producto);
+    setCantidad(1); // Reinicia cantidad por defecto
+    setMostrarModalCarrito(true);
+  };
+
+  const confirmarAgregarCarrito = () => {
+    if (cantidad <= 0 || cantidad > productoSeleccionado.Stock) {
+      alert("Cantidad inválida.");
+      return;
+    }
+
+    // Añadir al carrito
+    setCarrito((prevCarrito) => {
+      const existente = prevCarrito.find(
+        (p) => p.id_Producto === productoSeleccionado.id_Producto
+      );
+      if (existente) {
+        return prevCarrito.map((p) =>
+          p.id_Producto === productoSeleccionado.id_Producto
+            ? { ...p, cantidad: p.cantidad + cantidad }
+            : p
+        );
+      } else {
+        return [...prevCarrito, { ...productoSeleccionado, cantidad }];
+      }
+    });
+
+    console.log("Carrito actualizado:", carrito); // Depuración
+
+    // Reducir stock del producto
+    setProductos((prevProductos) =>
+      prevProductos.map((p) =>
+        p.id_Producto === productoSeleccionado.id_Producto
+          ? { ...p, Stock: p.Stock - cantidad }
+          : p
+      )
+    );
+
+    // Cerrar modal
+    setMostrarModalCarrito(false);
+    setProductoSeleccionado(null);
+  };
+
   const guardarCambios = async () => {
     try {
       await axios.put(`http://localhost:3000/api/productos/editar/${editandoId}`, {
@@ -86,7 +143,7 @@ const Productos = ({ busqueda, cargo, idSede }) => {
         stock: datosEditados.stock,
       });
       setEditandoId(null);
-      obtenerProductos(); // Recarga la lista
+      obtenerProductos();
     } catch (error) {
       console.error("Error al guardar cambios:", error);
     }
@@ -94,65 +151,83 @@ const Productos = ({ busqueda, cargo, idSede }) => {
 
   return (
     <>
-      {/* ... (modales de confirmación y edición se mantienen igual) ... */}
-       {mensajeExito && (
-        <div className="overlay">
-          <div className="mensaje-exito">✅ Producto eliminado correctamente</div>
-        </div>
-      )}
+      {mensajeExito && (
+        <div className="overlay">
+          <div className="mensaje-exito">✅ Producto eliminado correctamente</div>
+        </div>
+      )}
 
-      {mostrarConfirmacion && (
-        <div className="overlay">
-          <div className="mensaje-exito">
-            <p>
-              ¿Estás seguro de que deseas eliminar el producto{" "}
-              <strong>{productoAEliminar.nombre}</strong>?
-            </p>
-            <div className="botones-confirmacion">
-              <button onClick={confirmarEliminacion}>Sí</button>
-              <button onClick={() => setMostrarConfirmacion(false)}>Cancelar</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {mostrarConfirmacion && (
+        <div className="overlay">
+          <div className="mensaje-exito">
+            <p>
+              ¿Estás seguro de que deseas eliminar el producto{" "}
+              <strong>{productoAEliminar.nombre}</strong>?
+            </p>
+            <div className="botones-confirmacion">
+              <button onClick={confirmarEliminacion}>Sí</button>
+              <button onClick={() => setMostrarConfirmacion(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
 
-      {/* Modal de edición */}
-      {editandoId !== null && (
-        <div className="overlay">
-          <div className="modal-edicion">
-            <h3>Editar producto</h3>
-            <label>Nombre:</label>
-            <input
-              type="text"
-              value={datosEditados.nombre}
-              onChange={(e) =>
-                setDatosEditados({ ...datosEditados, nombre: e.target.value })
-              }
-            />
-            <label>Precio:</label>
-            <input
-              type="number"
-              value={datosEditados.precio}
-              onChange={(e) =>
-                setDatosEditados({ ...datosEditados, precio: e.target.value })
-              }
-            />
-            <label>Stock:</label>
-            <input
-              type="number"
-              value={datosEditados.stock}
-              onChange={(e) =>
-                setDatosEditados({ ...datosEditados, stock: e.target.value })
-              }
-            />
-            <div className="botones-modal">
-              <button onClick={guardarCambios}>💾 Guardar</button>
-              <button onClick={cancelarEdicion}>❌ Cancelar</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {editandoId !== null && (
+        <div className="overlay">
+          <div className="modal-edicion">
+            <h3>Editar producto</h3>
+            <label>Nombre:</label>
+            <input
+              type="text"
+              value={datosEditados.nombre}
+              onChange={(e) =>
+                setDatosEditados({ ...datosEditados, nombre: e.target.value })
+              }
+            />
+            <label>Precio:</label>
+            <input
+              type="number"
+              value={datosEditados.precio}
+              onChange={(e) =>
+                setDatosEditados({ ...datosEditados, precio: e.target.value })
+              }
+            />
+            <label>Stock:</label>
+            <input
+              type="number"
+              value={datosEditados.stock}
+              onChange={(e) =>
+                setDatosEditados({ ...datosEditados, stock: e.target.value })
+              }
+            />
+            <div className="botones-modal">
+              <button onClick={guardarCambios}>💾 Guardar</button>
+              <button onClick={cancelarEdicion}>❌ Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
 
+      {mostrarModalCarrito && productoSeleccionado && (
+        <div className="overlay">
+          <div className="modal-edicion">
+            <h3>Agregar al carrito</h3>
+            <p><strong>{productoSeleccionado.Nombre}</strong></p>
+            <label>Cantidad (máx {productoSeleccionado.Stock}):</label>
+            <input
+              type="number"
+              value={cantidad}
+              min="1"
+              max={productoSeleccionado.Stock}
+              onChange={(e) => setCantidad(Number(e.target.value))}
+            />
+            <div className="botones-modal">
+              <button onClick={confirmarAgregarCarrito}>✅ Agregar</button>
+              <button onClick={() => setMostrarModalCarrito(false)}>❌ Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <table>
         <thead>
@@ -166,16 +241,11 @@ const Productos = ({ busqueda, cargo, idSede }) => {
           </tr>
         </thead>
         <tbody>
-          {/* 2. APLICA EL FILTRO ANTES DEL MAP */}
           {productos
             .filter((producto) => {
-              // Si no hay búsqueda, devuelve todos
               if (!busqueda) return true;
-              // Convierte a minúsculas para búsqueda insensible
               const busquedaLower = busqueda.toLowerCase();
-              // Busca en el nombre del producto (puedes añadir más campos)
               return producto.Nombre.toLowerCase().includes(busquedaLower);
-              
             })
             .map((producto) => (
               <tr key={producto.id_Producto}>
@@ -186,7 +256,9 @@ const Productos = ({ busqueda, cargo, idSede }) => {
                 <td>{producto.Stock}</td>
                 <td>
                   {cargo === "Vendedor" ? (
-                    <button className="sell-btn">🛒 añadir</button>
+                    <button className="sell-btn" onClick={() => manejarAgregarCarrito(producto)}>
+                      🛒 añadir
+                    </button>
                   ) : (
                     <>
                       <button

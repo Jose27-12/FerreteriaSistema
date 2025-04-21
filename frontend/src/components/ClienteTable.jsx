@@ -42,7 +42,7 @@ const Clientes = ({ busqueda, cargo, sede }) => {
         setMostrarConfirmacion(false);
         setClienteAEliminar(null);
         obtenerClientes();
-        setTimeout(() => setMensajeExito(false), 3000);
+        setTimeout(() => setMensajeExito(false), 500);
         } catch (error) {
         console.error("Error al eliminar cliente:", error);
     }

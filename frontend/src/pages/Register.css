@@ -95,3 +95,25 @@ body {
     text-decoration: underline;
 }
   
+
+.input-group select {
+  width: 100%;
+  
+  padding-left: 5px;
+  font-size: 16px;
+  border: none;
+
+  background-color: transparent;
+  color: #004d40;
+  outline: none;
+  appearance: none; /* quita estilo por defecto del navegador */
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+
+
+.input-group select option {
+  background-color: #f1f1f1;
+  color: #004d40;
+}

@@ -64,9 +64,36 @@ const editarCliente = (req, res) => {
     );
   }
 
+  // Crear un nuevo cliente
+const crearCliente = (req, res) => {
+  const { nombre, apellido, telefono, direccion, correo } = req.body;
+
+  if (!nombre || !apellido || !telefono || !direccion || !correo) {
+    return res.status(400).json({ error: 'Faltan datos del cliente' });
+  }
+
+  connection.query(
+    'INSERT INTO cliente (Nombre, Apellido, Telefono, Direccion, Correo) VALUES (?, ?, ?, ?, ?)',
+    [nombre, apellido, telefono, direccion, correo],
+    (err, result) => {
+      if (err) {
+        console.error('Error al crear cliente:', err);
+        return res.status(500).json({ error: 'Error al crear cliente' });
+      }
+
+      res.status(201).json({ 
+        message: 'Cliente creado con éxito', 
+        id_cliente: result.insertId 
+      });
+    }
+  );
+};
+
+
 module.exports = {
     getClientes,
     buscarClientePorNombre,
     eliminarCliente,
     editarCliente, 
+    crearCliente,
 };

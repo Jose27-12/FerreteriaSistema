@@ -13,16 +13,34 @@ function Sidebar({ cargo, isOpen, toggleSidebar }) {
         <h2>Menú</h2>
         <ul>
           <li><Link to="/Inicio">Inicio</Link></li>
-          <li><Link to="/usuarios">Usuarios</Link></li>
+          {cargo !== 'Vendedor' && cargo !== 'Inventario' && (
+            <>
+              <li><Link to="/usuario">Usuarios</Link></li>
+
+            </>
+          )}
+          
           <li><Link to="/almacen">Productos</Link></li>
           {cargo !== 'Inventario' && (
             <>
               <li><Link to="/clientes">Clientes</Link></li>
-              <li><Link to="/ventas">Ventas</Link></li>
+              <li><Link to="/Ventas">Ventas</Link></li>
             </>
           )}
-          <li><Link to="/proveedores">Proveedores</Link></li>
+          {cargo !== 'Vendedor' && (
+            <li><Link to="/proveedores">Proveedores</Link></li>
+
+          )}
+          
           <li><Link to="/configuracion">Configuración</Link></li>
+
+
+          {cargo !== 'Vendedor' && cargo !== 'Inventario' && (
+            <>
+              <li><Link to="/notificaciones">Notificaciones</Link></li>
+
+            </>
+          )}
         </ul>
       </div>
     </>
