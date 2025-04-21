@@ -40,7 +40,7 @@ function Notificaciones() {
           <ul>
           {notificaciones.map((producto) => (
         <li key={producto.id_Producto} className="notificacion">
-            ⚠️ {producto.Nombre} tiene solo {producto.Stock} unidades en stock.
+            ⚠️ {producto.Nombre} tiene solo {producto.Stock} unidades en stock de la sede {producto.id_Sede}.
         </li>
 ))}
 

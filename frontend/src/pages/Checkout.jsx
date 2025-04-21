@@ -50,7 +50,20 @@ function Checkout() {
       const id_sede = localStorage.getItem('sede');
   
 
-      // 2. Crear factura y los productos en la base de datos
+      // 2. Registrar la venta en la base de datos
+      
+        await fetch('http://localhost:3000/api/ventas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id_Cliente: id_cliente,
+            Fecha: new Date().toISOString().split('T')[0],
+            Total: total
+          })
+        });
+
+
+      // 3. Crear factura y los productos en la base de datos
       const productosFormateados = carrito.map((producto) => ({
         
         id_producto: producto.id_Producto,
@@ -73,7 +86,7 @@ function Checkout() {
 
   
 
-        // 3. Crear detalles de la factura
+        // 4. Crear detalles de la factura
         for (let producto of carrito) {
           await fetch('http://localhost:3000/api/detalle-factura', {
             method: 'POST',

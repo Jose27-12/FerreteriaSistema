@@ -15,6 +15,7 @@ function AddProductForm() {
   const [mensaje, setMensaje] = useState('');
   const [tipoMensaje, setTipoMensaje] = useState(''); // 'exito' o 'error'
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notificaciones, setNotificaciones] = useState([]);
   const cargo = localStorage.getItem('cargo'); // Obtener el cargo del usuario desde localStorage
 
   const toggleSidebar = () => {
@@ -26,6 +27,23 @@ function AddProductForm() {
       setSedeSeleccionada(sede);
     }
   }, [cargo, sede]);
+
+   // Obtener notificaciones de bajo stock
+   useEffect(() => {
+    const obtenerNotificaciones = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/productos/bajo-stock');
+        setNotificaciones(response.data);
+      } catch (error) {
+        console.error('Error al obtener notificaciones:', error);
+      }
+    };
+
+    obtenerNotificaciones();
+    const intervalo = setInterval(obtenerNotificaciones, 60000); // Actualizar cada minuto
+
+    return () => clearInterval(intervalo); // Limpiar intervalo cuando el componente se desmonte
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,7 +71,7 @@ function AddProductForm() {
         setTimeout(() => {
           setMensaje('');
           setTipoMensaje('');
-        }, 2000);
+        }, 500);
         setNombre('');
         setPrecio('');
         setStock('');
@@ -66,7 +84,7 @@ function AddProductForm() {
         setTimeout(() => {
           setMensaje('');
           setTipoMensaje('');
-        }, 2000);
+        }, 500);
       }
     } catch (err) {
       console.error('Error al enviar producto:', err);
@@ -78,7 +96,12 @@ function AddProductForm() {
   
   return (
     <div className="main-layout">
-      <Sidebar cargo={cargo} isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <Sidebar 
+        cargo={cargo} 
+        isOpen={sidebarOpen} 
+        toggleSidebar={toggleSidebar} 
+        cantidadNotificaciones={notificaciones.length}
+      />
       <div className={`add-product-container ${sidebarOpen ? 'shifted' : ''}`}>
         {mensaje && (
       <div className={`mensaje-feedback ${tipoMensaje}`}>

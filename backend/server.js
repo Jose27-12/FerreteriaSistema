@@ -14,6 +14,10 @@ const facturasRoutes = require('./routes/Facturas');  // Nueva ruta
 const detalleFacturaRoutes = require('./routes/DetalleFactura'); // Nueva ruta
 const usuariosRoutes = require('./routes/Usuario'); // Nueva ruta
 const ventasRoutes = require('./routes/Venta'); // Nueva ruta
+const proveedoresRoutes = require('./routes/Proveedor');
+
+
+
 
 // Usar Rutas
 app.use('/api/productos', productosRoutes);
@@ -23,6 +27,8 @@ app.use('/api/facturas', facturasRoutes);  // Nueva ruta
 app.use('/api/detalle_factura', detalleFacturaRoutes);  // Nueva ruta
 app.use('/api', usuariosRoutes); // Nueva ruta
 app.use('/api/ventas', ventasRoutes); // Nueva ruta
+app.use('/api/proveedores', proveedoresRoutes); // Nueva ruta 
+
 
 
 // Servidor

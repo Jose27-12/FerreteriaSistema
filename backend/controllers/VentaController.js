@@ -47,9 +47,28 @@ const buscarVentaPorNombre = (req, res) => {
   });
 };
 
+// Registrar una nueva venta
+const registrarVenta = (req, res) => {
+  const { id_Cliente, Fecha, Total } = req.body;
+
+  const sql = `
+    INSERT INTO venta (id_Cliente, Fecha, Total)
+    VALUES (?, ?, ?)
+  `;
+
+  connection.query(sql, [id_Cliente, Fecha, Total], (err, result) => {
+    if (err) {
+      console.error('Error al registrar venta:', err);
+      return res.status(500).json({ error: 'Error al registrar la venta' });
+    }
+
+    res.status(201).json({ message: 'Venta registrada exitosamente', id_venta: result.insertId });
+  });
+};
+
 
 module.exports = { 
   obtenerVentas,
   buscarVentaPorNombre,
-
+  registrarVenta,
 };

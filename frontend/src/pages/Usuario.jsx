@@ -63,9 +63,32 @@ function Usuarios() {
     fetchUsuarios(); // Llama a la función cuando el componente se monta
   }, []);
 
+  const buscarUsuario = async (nombre) => {
+    console.log("Buscando usuario con nombre:", nombre);  // Agregar un log para ver el valor de 'nombre'
+    try {
+      const response = await fetch(`http://localhost:3000/api/usuarios/buscar?nombre=${nombre}`);
+      if (!response.ok) {
+        throw new Error('Error al buscar el usuario');
+      }
+      const data = await response.json();
+      console.log("Datos de usuarios encontrados:", data);  // Ver los datos recibidos
+      setUsuarios(data);  // Actualizar el estado con los resultados
+    } catch (error) {
+      console.error('Error al buscar usuarios:', error);
+    }
+  };
+
+  // Función que se ejecuta cada vez que cambia la búsqueda
+  const handleSearchChange = (event) => {
+    setBusqueda(event.target.value);  // Actualiza el valor de busqueda
+    buscarUsuario(event.target.value);  // Llama a la función de búsqueda con el nuevo valor
+  };
+
   const usuariosFiltrados = usuarios.filter((usuario) =>
     `${usuario.Nombre} ${usuario.Apellido}`.toLowerCase().includes(busqueda.toLowerCase())
   );
+
+  
 
   return (
     <div className="almacen-page">
@@ -84,7 +107,7 @@ function Usuarios() {
           type="text"
           placeholder="Buscar usuario..."
           value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
+          onChange={handleSearchChange} 
           className="search-input"
         />
 

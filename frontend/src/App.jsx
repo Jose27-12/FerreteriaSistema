@@ -10,6 +10,9 @@ import FacturaPage from './pages/FacturaPage';
 import Usuario from './pages/Usuario';
 import Ventas from './pages/Ventas';
 import Notificaciones from './pages/Notificaciones';
+import Proveedor from './pages/Proveedor';
+import AddProveedorForm from './components/AddProveedorForm';
+import ForgotPassword from './pages/ForgotPassword';
 
 
 
@@ -18,6 +21,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/almacen" element={<Almacen />} />
         <Route path="/agregar-producto" element={<AddProductForm />} />
@@ -27,6 +31,9 @@ function App() {
         <Route path='/Usuario' element={<Usuario />} />
         <Route path='/ventas' element={<Ventas />} />
         <Route path='/notificaciones' element={<Notificaciones />} />
+        <Route path='/proveedor' element={<Proveedor />} />
+        <Route path='/agregar-proveedor' element={<AddProveedorForm />} />
+        <Route path='/forgot-password' element={<ForgotPassword />} />
         {/* Agregar más rutas según sea necesario */}
 
       </Routes>

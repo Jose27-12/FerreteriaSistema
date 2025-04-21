@@ -80,10 +80,41 @@ const eliminarUsuario = (req, res) => {
 };
 
 
+const buscarUsuario = (req, res) => {
+  const { nombre } = req.query;  // Obtener el nombre desde la consulta
+
+  let query = `
+      SELECT 
+          u.id_Usuario,
+          u.usuario,
+          u.Cargo,
+          u.id_Sede,
+          e.nombre,
+          e.telefono
+      FROM 
+          usuario u
+      JOIN 
+          empleado e
+      ON 
+          u.id_empleado = e.id_empleado
+      WHERE e.nombre LIKE ?
+  `;
+
+  connection.query(query, [`%${nombre}%`], (err, results) => {
+      if (err) {
+          console.error('Error al buscar usuarios:', err);
+          return res.status(500).json({ error: 'Error al buscar usuarios' });
+      }
+      res.json(results);
+  });
+};
+
+
 
   
 
 module.exports = {
     getUsuarios,
-    eliminarUsuario
+    eliminarUsuario,
+    buscarUsuario,
 };

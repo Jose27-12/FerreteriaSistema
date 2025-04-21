@@ -72,7 +72,7 @@ const Productos = ({ busqueda, cargo, idSede, carrito, setCarrito }) => {
 
       setTimeout(() => {
         setMensajeExito(false);
-      }, 2000);
+      }, 900);
     } catch (error) {
       console.error("Error al eliminar producto:", error);
     }

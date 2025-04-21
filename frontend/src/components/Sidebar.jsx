@@ -28,7 +28,7 @@ function Sidebar({ cargo, isOpen, toggleSidebar, cantidadNotificaciones }) {
             </>
           )}
           {cargo !== 'Vendedor' && (
-            <li><Link to="/proveedores">Proveedores</Link></li>
+            <li><Link to="/proveedor">Proveedores</Link></li>
 
           )}
           
