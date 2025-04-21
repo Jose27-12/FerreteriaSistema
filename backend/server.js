@@ -19,7 +19,9 @@ const proveedoresRoutes = require('./routes/Proveedor');
 
 
 
+
 // Usar Rutas
+app.use('/api', productosRoutes); // Cambiado a productosRoutes
 app.use('/api/productos', productosRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/clientes', clientesRoutes);

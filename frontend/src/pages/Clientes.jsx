@@ -3,7 +3,7 @@ import Sidebar from '../components/Sidebar';
 import ClienteTable from '../components/ClienteTable';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Asegúrate de importar axios para hacer las peticiones HTTP
-import './admin.css';
+import './Dashboard.css'; // Asegúrate de tener el CSS correspondiente para el diseño
 import './notificaciones.css';
 
 function Clientes() {

@@ -12,7 +12,7 @@ function Sidebar({ cargo, isOpen, toggleSidebar, cantidadNotificaciones }) {
       <div className={`sidebar ${isOpen ? 'open' : ''}`}>
         <h2>Menú</h2>
         <ul>
-          <li><Link to="/Inicio">Inicio</Link></li>
+          <li><Link to="/dashboard">Dashboard</Link></li>
           {cargo !== 'Vendedor' && cargo !== 'Inventario' && (
             <>
               <li><Link to="/usuario">Usuarios</Link></li>

@@ -13,6 +13,7 @@ import Notificaciones from './pages/Notificaciones';
 import Proveedor from './pages/Proveedor';
 import AddProveedorForm from './components/AddProveedorForm';
 import ForgotPassword from './pages/ForgotPassword';
+import Dashboard from './pages/Dashboard';
 
 
 
@@ -34,6 +35,7 @@ function App() {
         <Route path='/proveedor' element={<Proveedor />} />
         <Route path='/agregar-proveedor' element={<AddProveedorForm />} />
         <Route path='/forgot-password' element={<ForgotPassword />} />
+        <Route path='/dashboard' element={<Dashboard />} />
         {/* Agregar más rutas según sea necesario */}
 
       </Routes>

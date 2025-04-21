@@ -9,6 +9,6 @@ router.delete('/eliminar/:id', productoController.eliminarProducto);
 router.put('/editar/:id', productoController.editarProducto); // Agregar la ruta para editar producto
 router.get('/bajo-stock', productoController.getProductosBajoStock); // Ruta para obtener productos bajo stock
 router.put('/stock/:id_Producto', productoController.actualizarStock);
-
+router.get('/productos-mas-vendidos', productoController.getProductosMasVendidos); // Ruta para obtener productos más vendidos
 
 module.exports = router;
