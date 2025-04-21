@@ -15,6 +15,7 @@ function AddProductForm() {
   const [mensaje, setMensaje] = useState('');
   const [tipoMensaje, setTipoMensaje] = useState(''); // 'exito' o 'error'
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const cargo = localStorage.getItem('cargo'); // Obtener el cargo del usuario desde localStorage
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);

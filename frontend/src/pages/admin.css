@@ -5,6 +5,8 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+
+
 /* Sidebar oculto por defecto */
 .sidebar {
   position: fixed;
@@ -53,6 +55,16 @@
 .sidebar ul li a:hover {
   color: #38bdf8;
 }
+
+.badge {
+  background-color: red;
+  color: white;
+  padding: 2px 6px;
+  margin-left: 8px;
+  border-radius: 50%;
+  font-size: 12px;
+}
+
 
 /* Botón hamburguesa visible siempre */
 .hamburger {

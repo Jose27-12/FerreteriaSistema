@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import './notificaciones.css';
 import axios from 'axios';
+import MainLayout from '../components/MainLayout';
+
+
 
 function Notificaciones() {
   const [notificaciones, setNotificaciones] = useState([]);
@@ -29,7 +32,8 @@ function Notificaciones() {
 
   return (
     <div className="notificaciones-page">
-      <Sidebar cargo="Administrador" isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <Sidebar cargo="Administrador" isOpen={sidebarOpen} toggleSidebar={toggleSidebar} 
+      cantidadNotificaciones={notificaciones.length}/>
       <div className={`main-content ${sidebarOpen ? 'shifted' : ''}`}>
         <h1>Notificaciones</h1>
         <div className="notificaciones-container">

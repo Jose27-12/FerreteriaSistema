@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import './admin.css'; // Usa el mismo CSS que Almacen
+import './notificaciones.css'; // Usa el mismo CSS que Almacen
+import axios from 'axios';
 
 function Ventas() {
   const [ventas, setVentas] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [cargo, setCargo] = useState('');
   const [busqueda, setBusqueda] = useState('');
+   const [notificaciones, setNotificaciones] = useState([]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -23,6 +26,23 @@ function Ventas() {
         console.error('Error al cargar ventas:', error);
         alert('Error al cargar ventas');
       });
+  }, []);
+
+  // Obtener notificaciones de bajo stock
+  useEffect(() => {
+    const obtenerNotificaciones = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/productos/bajo-stock');
+        setNotificaciones(response.data);
+      } catch (error) {
+        console.error('Error al obtener notificaciones:', error);
+      }
+    };
+
+    obtenerNotificaciones();
+    const intervalo = setInterval(obtenerNotificaciones, 60000); // Actualizar cada minuto
+
+    return () => clearInterval(intervalo); // Limpiar intervalo cuando el componente se desmonte
   }, []);
 
   // Función para formatear precios al estilo colombiano
@@ -42,7 +62,12 @@ function Ventas() {
 
   return (
     <div className="almacen-page">
-      <Sidebar cargo={cargo} isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <Sidebar 
+        cargo={cargo} 
+        isOpen={sidebarOpen} 
+        toggleSidebar={toggleSidebar} 
+        cantidadNotificaciones={notificaciones.length}
+      />
       <div className={`main-content ${sidebarOpen ? 'shifted' : ''}`}>
         <div className="header-productos">
           <h1>Ventas Realizadas</h1>

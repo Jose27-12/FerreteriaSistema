@@ -3,7 +3,9 @@ import Sidebar from '../components/Sidebar';
 import UsuarioTable from '../components/UsuarioTable';
 import { FaPlus } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // Asegúrate de importar axios para hacer las peticiones HTTP
 import './admin.css';
+
 
 function Usuarios() {
   const [busqueda, setBusqueda] = useState('');
@@ -11,6 +13,7 @@ function Usuarios() {
   const [sede, setSede] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [usuarios, setUsuarios] = useState([]);
+  const [notificaciones, setNotificaciones] = useState([]);
 
   const navigate = useNavigate();
 
@@ -18,6 +21,7 @@ function Usuarios() {
     setSidebarOpen(!sidebarOpen);
   };
 
+  // Obtener datos de los usuarios
   const fetchUsuarios = async () => {
     try {
       const storedSede = localStorage.getItem('sede');
@@ -32,6 +36,24 @@ function Usuarios() {
     }
   };
 
+  // Obtener notificaciones de bajo stock
+  useEffect(() => {
+    const obtenerNotificaciones = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/productos/bajo-stock');
+        setNotificaciones(response.data);
+      } catch (error) {
+        console.error('Error al obtener notificaciones:', error);
+      }
+    };
+
+    obtenerNotificaciones();
+    const intervalo = setInterval(obtenerNotificaciones, 60000); // Actualizar cada minuto
+
+    return () => clearInterval(intervalo); // Limpiar intervalo cuando el componente se desmonte
+  }, []);
+
+  // Obtener el cargo y sede del localStorage
   useEffect(() => {
     const storedCargo = localStorage.getItem('cargo');
     const storedSede = localStorage.getItem('sede');
@@ -47,7 +69,12 @@ function Usuarios() {
 
   return (
     <div className="almacen-page">
-      <Sidebar cargo={cargo} isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <Sidebar 
+        cargo={cargo} 
+        isOpen={sidebarOpen} 
+        toggleSidebar={toggleSidebar} 
+        cantidadNotificaciones={notificaciones.length} // Pasamos la cantidad de notificaciones
+      />
       <div className={`main-content ${sidebarOpen ? 'shifted' : ''}`}>
         <div className="header-productos">
           <h1>Usuarios</h1>
@@ -61,7 +88,7 @@ function Usuarios() {
           className="search-input"
         />
 
-        {/* 👉 Aquí sí pasamos fetchUsuarios como prop */}
+        {/* Mostrar la tabla de usuarios */}
         <UsuarioTable usuarios={usuariosFiltrados} obtenerUsuarios={fetchUsuarios} />
       </div>
     </div>

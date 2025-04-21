@@ -4,9 +4,10 @@ import ProductTable from '../components/ProductTable';
 import { FaPlus } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext'; // 👈 Importas el contexto
-
-
 import './admin.css';
+import './notificaciones.css';
+import axios from 'axios'; // Asegúrate de importar axios para hacer las peticiones HTTP
+
 
 function Almacen() {
   const [busqueda, setBusqueda] = useState('');
@@ -15,6 +16,7 @@ function Almacen() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { carrito, setCarrito } = useCart(); // 👈 Obtienes datos del contexto
   const [mostrarCarrito, setMostrarCarrito] = useState(false);
+  const [notificaciones, setNotificaciones] = useState([]);
 
 
   const toggleSidebar = () => {
@@ -26,6 +28,23 @@ function Almacen() {
     const storedSede = localStorage.getItem('sede');
     if (storedCargo) setCargo(storedCargo);
     if (storedSede) setSede(storedSede);
+  }, []);
+
+  // Obtener notificaciones de bajo stock
+  useEffect(() => {
+    const obtenerNotificaciones = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/productos/bajo-stock');
+        setNotificaciones(response.data);
+      } catch (error) {
+        console.error('Error al obtener notificaciones:', error);
+      }
+    };
+
+    obtenerNotificaciones();
+    const intervalo = setInterval(obtenerNotificaciones, 60000); // Actualizar cada minuto
+
+    return () => clearInterval(intervalo); // Limpiar intervalo cuando el componente se desmonte
   }, []);
 
   const navigate = useNavigate();
@@ -44,7 +63,12 @@ function Almacen() {
 
   return (
     <div className="almacen-page">
-      <Sidebar cargo={cargo} isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <Sidebar 
+        cargo={cargo} 
+        isOpen={sidebarOpen} 
+        toggleSidebar={toggleSidebar} 
+        cantidadNotificaciones={notificaciones.length}
+      />
       <div className={`main-content ${sidebarOpen ? 'shifted' : ''}`}>
       <div className="header-productos">
         <h1>Productos</h1>

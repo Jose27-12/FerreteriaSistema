@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function Sidebar({ cargo, isOpen, toggleSidebar }) {
+function Sidebar({ cargo, isOpen, toggleSidebar, cantidadNotificaciones }) {
   return (
     <>
       {/* Botón hamburguesa */}
@@ -32,15 +32,21 @@ function Sidebar({ cargo, isOpen, toggleSidebar }) {
 
           )}
           
-          <li><Link to="/configuracion">Configuración</Link></li>
-
-
           {cargo !== 'Vendedor' && cargo !== 'Inventario' && (
             <>
-              <li><Link to="/notificaciones">Notificaciones</Link></li>
+              <li><Link to="/notificaciones">Notificaciones
+              {cantidadNotificaciones > 0 && (
+                <span className="badge">{cantidadNotificaciones}</span>
+              )}
+              </Link></li>
 
             </>
           )}
+
+          <li><Link to="/configuracion">Configuración</Link></li>
+
+
+          
         </ul>
       </div>
     </>
