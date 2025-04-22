@@ -131,3 +131,14 @@ body {
     background: transparent;
     color: #000;
 }
+.input-with-icon .input-password {
+    width: 100%;
+    padding-right: 35px; 
+    padding-left: 10px;
+    border: none;
+    border-bottom: 2px solid #004d40;
+    outline: none;
+    font-size: 16px;
+    background: transparent;
+    color: #000; /* Cambia el color del borde al hacer foco */
+}

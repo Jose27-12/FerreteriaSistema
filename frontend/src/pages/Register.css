@@ -48,6 +48,11 @@ body {
     font-size: 14px;
     color: #000;
   }
+
+  .input-group input[type="password"] {
+    border: none;
+ 
+  }
   
   .input-group i {
     margin-left: 10px;

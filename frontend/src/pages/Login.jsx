@@ -18,10 +18,11 @@ const Login = () => {
         usuario,
         contrasena
       });
-
+      
       if (res.data.success) {
         localStorage.setItem('cargo', res.data.cargo);      
         localStorage.setItem('sede', res.data.id_Sede);
+        localStorage.setItem('correo', usuario); // Guardar el correo en localStorage
         navigate('/almacen');
       } else {
         alert('Credenciales inválidas');
@@ -39,8 +40,9 @@ const Login = () => {
       <form className="login-form" onSubmit={handleSubmit}>
         <label>
           <div className="input-with-icon">
-            <MdEmail className="icon" />
+            <MdEmail className="icon"/>
             <input
+            className=''
               type="text"
               placeholder="correo@example.com"
               value={usuario}
@@ -52,8 +54,9 @@ const Login = () => {
 
         <label>
           <div className="input-with-icon">
-            <MdLock className="icon" />
+            <MdLock className="icon"/>
             <input
+            className='input-password'
               type="password"
               placeholder="Tu contraseña"
               value={contrasena}

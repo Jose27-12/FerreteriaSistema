@@ -10,5 +10,5 @@ router.put('/editar/:id', productoController.editarProducto); // Agregar la ruta
 router.get('/bajo-stock', productoController.getProductosBajoStock); // Ruta para obtener productos bajo stock
 router.put('/stock/:id_Producto', productoController.actualizarStock);
 router.get('/productos-mas-vendidos', productoController.getProductosMasVendidos); // Ruta para obtener productos más vendidos
-
+router.get('/productos-menos-vendidos', productoController.getProductosMenosVendidos); // Ruta para obtener productos menos vendidos
 module.exports = router;

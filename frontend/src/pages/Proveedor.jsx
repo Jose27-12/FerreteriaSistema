@@ -41,31 +41,37 @@ function Proveedor() {
     };
 
     useEffect(() => {
-        const storedCargo = localStorage.getItem('cargo');
-        const storedSede = localStorage.getItem('sede');
-        if (storedCargo) setCargo(storedCargo);
-        if (storedSede) setSede(storedSede);
-      
-        fetchProveedores(); // 👈 se llama al cargar la vista
-      }, []);
-      ;
-
-       // Obtener notificaciones de bajo stock
-  useEffect(() => {
-    const obtenerNotificaciones = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/api/productos/bajo-stock');
-        setNotificaciones(response.data);
-      } catch (error) {
-        console.error('Error al obtener notificaciones:', error);
-      }
-    };
-
-    obtenerNotificaciones();
-    const intervalo = setInterval(obtenerNotificaciones, 60000); // Actualizar cada minuto
-
-    return () => clearInterval(intervalo); // Limpiar intervalo cuando el componente se desmonte
-  }, []);
+      const storedCargo = localStorage.getItem('cargo');
+      const storedSede = localStorage.getItem('sede');
+      if (storedCargo) setCargo(storedCargo);
+      if (storedSede) setSede(Number(storedSede));
+  
+    }
+    , []);
+  
+    useEffect(() => {
+      const obtenerNotificaciones = async () => {
+        try {
+          const storedSede = localStorage.getItem('sede');
+          const sedeUsuario = storedSede ? Number(storedSede) : null;
+    
+          const response = await axios.get('http://localhost:3000/api/productos/bajo-stock');
+    
+          const productosFiltrados = sedeUsuario
+            ? response.data.filter(producto => Number(producto.id_Sede) === sedeUsuario)
+            : response.data;
+    
+          setNotificaciones(productosFiltrados);
+        } catch (error) {
+          console.error('Error al obtener notificaciones:', error);
+        }
+      };
+    
+      obtenerNotificaciones();
+      const intervalo = setInterval(obtenerNotificaciones, 60000); // cada 60 segundos
+    
+      return () => clearInterval(intervalo);
+    }, []);
 
 
   return (

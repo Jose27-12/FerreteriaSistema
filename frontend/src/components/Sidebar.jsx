@@ -12,7 +12,11 @@ function Sidebar({ cargo, isOpen, toggleSidebar, cantidadNotificaciones }) {
       <div className={`sidebar ${isOpen ? 'open' : ''}`}>
         <h2>Menú</h2>
         <ul>
-          <li><Link to="/dashboard">Dashboard</Link></li>
+          {cargo === 'Admin' && (
+            <li><Link to="/dashboard">Dashboard</Link></li>
+          )}
+          
+
           {cargo !== 'Vendedor' && cargo !== 'Inventario' && (
             <>
               <li><Link to="/usuario">Usuarios</Link></li>
@@ -32,7 +36,7 @@ function Sidebar({ cargo, isOpen, toggleSidebar, cantidadNotificaciones }) {
 
           )}
           
-          {cargo !== 'Vendedor' && cargo !== 'Inventario' && (
+          {cargo !== 'Vendedor' && (
             <>
               <li><Link to="/notificaciones">Notificaciones
               {cantidadNotificaciones > 0 && (

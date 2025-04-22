@@ -188,6 +188,44 @@ const getProductosMasVendidos = (req, res) => {
   });
 };
 
+const getProductosMenosVendidos = (req, res) => {
+  const rango = req.query.rango;
+
+  let condicionFecha = '';
+  if (rango === 'diario') {
+    condicionFecha = 'DATE(f.fecha) = CURDATE()';
+  } else if (rango === 'semanal') {
+    condicionFecha = 'YEARWEEK(f.fecha, 1) = YEARWEEK(CURDATE(), 1)';
+  } else if (rango === 'mensual') {
+    condicionFecha = 'MONTH(f.fecha) = MONTH(CURDATE()) AND YEAR(f.fecha) = YEAR(CURDATE())';
+  } else {
+    return res.status(400).json({ error: 'Parámetro "rango" inválido. Usa diario, semanal o mensual.' });
+  }
+
+  const query = `
+    SELECT p.Nombre AS nombre_producto, 
+           SUM(df.cantidad) AS total_vendidos,
+           SUM(df.precio_unitario * df.cantidad) AS ingresos
+    FROM facturacion f
+    JOIN detalle_factura df ON f.id_facturacion = df.id_facturacion
+    JOIN producto p ON df.id_producto = p.id_producto
+    WHERE ${condicionFecha}
+    GROUP BY p.id_producto
+    ORDER BY total_vendidos ASC
+    LIMIT 8;
+  `;
+
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error('Error al obtener productos menos vendidos:', err);
+      return res.status(500).json({ error: 'Error en la consulta de productos menos vendidos' });
+    }
+
+    res.json(results);
+  });
+};
+
+
   
 module.exports = {
   getProductos,
@@ -198,4 +236,5 @@ module.exports = {
   actualizarStock,
   getProductosBajoStock,
   getProductosMasVendidos,
+  getProductosMenosVendidos,
 };

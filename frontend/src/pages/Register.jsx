@@ -24,7 +24,7 @@ const Register = () => {
     } catch (error) {
       console.error('Error al registrar:', error);
       alert('Error al registrar');
-    }
+    } 
   };
 
   return (

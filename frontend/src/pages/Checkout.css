@@ -139,3 +139,48 @@
     background-color: #5a6268;
   }
   
+  /* Estilos para el formulario */
+.formulario-cliente {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Dos columnas de igual tamaño */
+   gap: 35px;/* Espacio entre columnas y filas */
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Estilos para los inputs */
+.formulario-cliente input {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  color: #333;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  width: 100%;
+}
+
+/* Efecto cuando el input está enfocado */
+.formulario-cliente input:focus {
+  border-color: #1bc700;
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(27, 198, 0, 0.4);
+}
+
+/* Placeholder */
+.formulario-cliente input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+/* Hacer que el último input ocupe toda la fila */
+.formulario-cliente input:last-child {
+  grid-column: span 2; /* Hace que el último input ocupe dos columnas */
+}
+
+/* Ajustes en caso de que haya más de 4 inputs (el último quedaría en una nueva fila) */
+.formulario-cliente input:nth-child(5) {
+  grid-column: span 2;
+  margin-bottom: 15px;
+}

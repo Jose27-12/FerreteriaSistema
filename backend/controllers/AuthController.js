@@ -45,5 +45,34 @@ const register = (req, res) => {
   });
 };
 
+const cambiarContrasena = (req, res) => {
+  console.log("BODY recibido en el backend:", req.body); // 👈 este log es clave
+  const { correo, nuevaContrasena } = req.body;
 
-module.exports = { login, register };
+  if (!correo || !nuevaContrasena) {
+    return res.status(400).json({ success: false, message: "Faltan datos requeridos." });
+  }
+
+  const sql = 'UPDATE usuario SET Contraseña = ? WHERE usuario = ?';
+
+  connection.query(sql, [nuevaContrasena, correo], (err, result) => {
+    if (err) {
+      console.error("Error al cambiar contraseña:", err);
+      return res.status(500).json({ success: false, message: "Error del servidor", error: err });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: "Usuario no encontrado." });
+    }
+
+    res.json({ success: true, message: "Contraseña actualizada correctamente." });
+  });
+};
+
+
+
+module.exports = { 
+  login, 
+  register,
+  cambiarContrasena,
+};

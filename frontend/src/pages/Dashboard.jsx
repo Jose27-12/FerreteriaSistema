@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import DashboardProductos from '../components/DashboardProductos';
 import Sidebar from '../components/Sidebar';
+;
+import './Dashboard.css'; // Asegúrate de tener el CSS correspondiente para el diseño
 
 import axios from 'axios'; // Asegúrate de importar axios para hacer las peticiones HTTP
 

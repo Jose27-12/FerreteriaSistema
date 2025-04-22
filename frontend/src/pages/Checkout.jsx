@@ -4,7 +4,8 @@ import Sidebar from '../components/Sidebar';
 import './Checkout.css';
 import { useCart } from '../context/CartContext';
 import { crearFactura } from '../services/facturaService';
-import { crearDetalleFactura } from '../services/detalleFacturaService';
+import { crearDetalleFactura } from '../services/detalleFacturaService'
+import { generarFacturaPDF } from '../utils/generarFacturaPDF';
 
 function Checkout() {
   const navigate = useNavigate();
@@ -81,8 +82,9 @@ function Checkout() {
         cliente,
         productosFormateados
       );
-      const id_Facturacion = facturaData.id_factura;
-  
+      
+      const id_Facturacion = facturaData.id_Facturacion;
+
 
   
 
@@ -104,10 +106,29 @@ function Checkout() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({cantidad: producto.stock - producto.cantidad})
-});
-
-        
+});  
       }
+
+      const facturaParaPDF = {
+        
+        id_Cliente: clienteData.id_cliente,
+        id_Producto: carrito.map(p => p.id_Producto).join(', '),
+        id_Empleado: localStorage.getItem('correo'),
+        
+        id_Sede: localStorage.getItem('sede'),
+        fecha: new Date().toISOString().split('T')[0],
+        nombre_cliente: cliente.nombre,
+        apellido: cliente.apellido,
+        telefono: cliente.telefono,  
+        direccion: cliente.direccion, 
+        nombre_producto: carrito.map(p => p.Nombre).join(', '),
+        cantidad: carrito.reduce((acc, p) => acc + p.cantidad, 0),
+        precio_unitario: carrito[0].Precio,
+        total: total
+      };
+      
+      generarFacturaPDF(facturaParaPDF);
+      await notificarInventario(carrito, clienteData);
 
       
   
@@ -123,9 +144,31 @@ function Checkout() {
       console.error('Error al procesar la compra:', error);
       alert('Ocurrió un error al procesar la compra');
     }
+
+
+    
   };
   
-
+  const notificarInventario = async (productos, cliente) => {
+    try {
+      const mensaje = `Nueva orden para entregar. Cliente: ${cliente.nombre} ${cliente.apellido}. Productos a entregar: ${productos.map((p) => `${p.Nombre} (Cantidad: ${p.cantidad})`).join(', ')}`;
+  
+      await fetch('http://localhost:3000/api/notificaciones', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mensaje,
+          Cargo: 'Inventario',
+          id_cliente: cliente.id_cliente,
+          productos: productos
+        })
+      });
+  
+      console.log('Notificación enviada al inventario');
+    } catch (error) {
+      console.error('Error al enviar notificación al inventario:', error);
+    }
+  };
   
   
 
